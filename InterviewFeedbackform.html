@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Interview Evaluation Form</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f4f0;color:#1a1a18;font-size:15px;line-height:1.5;padding:2rem 1rem}
+.form-wrap{max-width:860px;margin:0 auto}
+
+.header-card{background:#fff;border:0.5px solid rgba(0,0,0,0.12);border-radius:12px;padding:1.5rem;margin-bottom:0.75rem;display:flex;align-items:center;gap:1.5rem}
+.logo-img{width:110px;height:75px;object-fit:contain;border-radius:8px;flex-shrink:0}
+.form-title h1{font-size:20px;font-weight:500;color:#1a1a18;margin-bottom:3px}
+.form-title p{font-size:13px;color:#5f5e5a}
+.badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:500;background:#ddeeff;color:#185fa5;margin-top:7px}
+
+.section-card{background:#fff;border:0.5px solid rgba(0,0,0,0.12);border-radius:12px;padding:1.25rem;margin-bottom:0.75rem}
+.section-label{font-size:11px;font-weight:600;color:#888780;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem}
+
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:12px;color:#5f5e5a;font-weight:500}
+.field input,.field select,.field textarea{border:0.5px solid rgba(0,0,0,0.22);border-radius:8px;padding:8px 10px;font-size:14px;background:#f5f4f0;color:#1a1a18;font-family:inherit;width:100%;outline:none;transition:border-color 0.15s,box-shadow 0.15s;appearance:auto}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#4a86c8;box-shadow:0 0 0 2px rgba(74,134,200,0.15);background:#fff}
+.field input::placeholder{color:#aaa}
+.field textarea{resize:vertical;min-height:80px}
+.field textarea::placeholder{color:#aaa}
+
+.eval-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:0.5px solid rgba(0,0,0,0.08)}
+.eval-row:last-child{border-bottom:none}
+.eval-label{flex:1;font-size:14px;color:#1a1a18}
+.eval-sub{font-size:12px;color:#888780;margin-top:2px}
+.stars{display:flex;gap:4px;flex-shrink:0}
+.eval-select{border:0.5px solid rgba(0,0,0,0.18);border-radius:8px;padding:5px 8px;font-size:13px;background:#f5f4f0;color:#1a1a18;font-family:inherit;width:145px;flex-shrink:0;outline:none;cursor:pointer}
+.eval-select:focus{border-color:#4a86c8}
+
+.tech-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.tech-section-title{font-size:13px;font-weight:600;color:#1a1a18;margin-bottom:8px;padding-bottom:6px;border-bottom:1.5px solid #e8e6e0}
+.tech-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid rgba(0,0,0,0.06);gap:8px}
+.tech-row:last-child{border-bottom:none}
+.tech-row-label{font-size:13px;color:#1a1a18;flex:1}
+.tech-stars{display:flex;gap:3px;flex-shrink:0}
+.tech-score-line{margin-top:10px;padding-top:8px;border-top:0.5px solid rgba(0,0,0,0.08);font-size:12px;color:#5f5e5a}
+.tech-score-line span{font-weight:600;color:#1a1a18}
+
+.score-bar{background:#fff;border:0.5px solid rgba(0,0,0,0.12);border-radius:12px;padding:1.25rem;margin-bottom:0.75rem;display:flex;align-items:center;gap:1.25rem}
+.score-num{font-size:30px;font-weight:500;color:#1a1a18;min-width:70px}
+.score-sub{font-size:12px;color:#5f5e5a;margin-top:2px}
+.score-track{flex:1;height:8px;background:rgba(0,0,0,0.10);border-radius:4px;overflow:hidden}
+.score-fill{height:100%;border-radius:4px;transition:width 0.35s,background 0.35s;width:0%;background:#10B981}
+
+.decision-row{display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:1rem}
+.decision-btn{padding:7px 20px;border-radius:20px;border:0.5px solid rgba(0,0,0,0.18);background:transparent;cursor:pointer;font-size:13px;font-weight:500;color:#5f5e5a;font-family:inherit;transition:all 0.15s}
+.decision-btn:hover{background:#f0efeb}
+.decision-btn.sel-green{background:#dcfce7;border-color:#16a34a;color:#15803d}
+.decision-btn.sel-amber{background:#fef3c7;border-color:#d97706;color:#92400e}
+.decision-btn.sel-red{background:#fee2e2;border-color:#dc2626;color:#991b1b}
+
+.action-row{display:flex;gap:0.75rem;margin-top:0.75rem}
+.btn-pdf,.btn-email{flex:1;padding:11px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;border:none;transition:background 0.15s}
+.btn-pdf{background:#ddeeff;color:#185fa5;border:0.5px solid #b5d4f4}
+.btn-pdf:hover{background:#c8e0f8}
+.btn-email{background:#dcfce7;color:#15803d;border:0.5px solid #86efac}
+.btn-email:hover{background:#bbf7d0}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-box{background:#fff;border-radius:12px;padding:1.75rem;width:500px;max-width:95vw;box-shadow:0 8px 32px rgba(0,0,0,0.18)}
+.modal-title{font-size:17px;font-weight:500;color:#1a1a18;margin-bottom:4px}
+.modal-subtitle{font-size:12px;color:#5f5e5a;margin-bottom:1.25rem}
+.modal-field{display:flex;flex-direction:column;gap:4px;margin-bottom:0.75rem}
+.modal-field label{font-size:12px;color:#5f5e5a;font-weight:500}
+.modal-field input{border:0.5px solid rgba(0,0,0,0.22);border-radius:8px;padding:8px 10px;font-size:14px;background:#f5f4f0;color:#1a1a18;font-family:inherit;outline:none}
+.modal-field input:focus{border-color:#4a86c8;background:#fff}
+.modal-hint{font-size:11px;color:#888780;margin-top:3px}
+.modal-actions{display:flex;gap:0.6rem;margin-top:1.25rem}
+.modal-send{flex:1;padding:9px;border-radius:8px;background:#dcfce7;color:#15803d;border:0.5px solid #86efac;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit}
+.modal-send:hover{background:#bbf7d0}
+.modal-cancel{padding:9px 20px;border-radius:8px;background:transparent;color:#5f5e5a;border:0.5px solid rgba(0,0,0,0.18);font-size:14px;cursor:pointer;font-family:inherit}
+.modal-cancel:hover{background:#f0efeb}
+.modal-status{margin-top:0.75rem;font-size:13px;text-align:center;padding:8px;border-radius:6px;display:none}
+.modal-status.ok{background:#dcfce7;color:#15803d;display:block}
+.modal-status.err{background:#fee2e2;color:#991b1b;display:block}
+.divider{border:none;border-top:0.5px solid rgba(0,0,0,0.1);margin:1rem 0}
+
+@media print{
+  @page{size:A4;margin:14mm 12mm}
+  body{background:#fff;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .action-row,.modal-overlay{display:none!important}
+  .form-wrap{max-width:100%}
+  .header-card,.section-card,.score-bar{box-shadow:none;border:0.8px solid #ddd;border-radius:8px}
+  .page-break-before{page-break-before:always}
+}
+</style>
+</head>
+<body>
+<div class="form-wrap">
+
+  <!-- HEADER -->
+  <div class="header-card">
+    <img src="data:image/jpeg;base64,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888888888888888888888888888888887rB18888887w87d9888888xj2/ZHP888888q9d8dY+8vW188LBudQrFxx+88888888s8888888888888888888888888888888888888888888888888888888888//EACgRAQACAQIEBgIDAAAAAAAAAAEAESExQVFxkaEQIGGBwfCx0VBg4f/aAAgBAwEBPxD+MMHa7EraB65en7SbpPqB++8VGys0qXtlv389lW5V8C+1zmTTq8j56XF689T5e3KWFocDB2+Yt5fO2eJT20rnekH4yrZgZ430e8vsToHI0JhDIuOJ7v3EQLg6ecXV90iMfo6uzbjEoXgfgm74TIH7lhibEzTfwwjaawyIiZ2zHNF3GTxdwhjSw+8oUbXB+Ih1EGa0M9VjVd2Ehg9v9ikNoqsGoii6Ya6Qo1f0P//EACgRAQABAgQFBAMBAAAAAAAAAAERACExQVGRcYGhsdEgYcHwEFDhYP/aAAgBAgEBPxD9Y4WA1qYlftY38DToH2FeOlATebSA7HrgGxNS9yFOsVwekwOPjeKCIJoy+DrxrCBdW71+Kw9YV0Ji4zhhDelVxJzXPKe7lhUP08leOdSOwkRtnzoLsj7LtQiYrziN9PW4m+40ZHNsdHVnpQADV3Ukg1Kcg1oVG8t/mrBwEfjBAsAxaWKjPG1Akhqx/PHZH29E4mOHmhARd3WiwmOHlqbkK2M8AO1TswO9L7gzr/O9D0Rw/tEZpWcqDhbjuT/hNV//xAAnEAEAAQMEAQMFAQEAAAAAAAABEQAhMUFRYXGBECCRMEChsfBw0f/aAAgBAQABPxD/ACNQFWA1pTJJD+5WpIUwEfKn8VLQ0yRghC0uRtz9psgR8RkXANNTvBa7BZfKdVwYNP4j8Vo72UfgaNFZrD+AabyskBSWWCS7P1jJxC8sSQniii/ufBJIMkM3qH07oboROvTT64x0bvBemdHrp8vY7l0Ur/4cjw2jqfFCHmX8IoPlRyEc5d4seAqywwMB4PsGI+HoyQboHii8++XZvgbSpGuASFRDYlXtasPG3QXQ6y8ZoMR0Sgah18S70KNG8xJxq8nooXzwMA2A+xFIZIiHAS0IJKxcP3U+Oi2AgLIjkpTwkCVcdSHjExwohTK2kw4aZ0zkS7L3bhzUFDhGlrNgpD7l4Auq6FctYqQDQeGnV2An3VsFXIRIxPKSHZcVI9lhg5/Ey5oPW1QkiIA3VAEuxj6mUAi9ZNJwaCi6IxZZANyivdJjWjTpjx8pRswikGB26Qk8OlJbOCSs/DEkG6w3sruMFokrC0Bc8t5gntL/AAtBR8gmUSqDEkkySSXo8eP3BwDAgTEhCIoJiXliGcQAXBOzimux0/Aj5BVmSFYh4WHkptUvklGhQEJjGkXcoJCAX1EYu60amj4IlFvKnzTv9NwD+0o8ZlTFyKzfIFPcrwi6q5b+ttCKGVgSTsxfDajKUxbEJ/Z8VZYWIzigkjcdGr/Xib94ALzTuAHwsPMjzQibpkPMD2rXiT2GQUUwlxqUtYikRLsExvex74c1WAxGmltL2073oeu0x2uOz7MXt/3rtBnQB+upgHIOQEPaztWAMLGrH6/m+w1G2EGLFywk0LWhTwvEqCZAowSUhkkk8MUgQilrJhXRBaUkGZsz3gcA2DShPhKWrrBQweXb2hnhwnesBeFFKIkhkRYl1LCkjH860fqFTBdmPQuogyORbYXGfikkom7/ANacTFdIKkyYQ3bulICIgWHHweoqYmQDglex11p3pb768gIVhU01dkwAI+uPiZvRWECVZRFowS7gn0KA/DBR5EPepzV2EItSYFMKjRK2qd5ApCIMoExJIuiOKIk2mWHRh0pdE+E0gzSSk4v7W429dQwFk1EQTUWqwhJbkweCh2P4uqRIU737UMo/+syTDERN7JBakZ0fyhosctRflBU8/R3KppcIOaIWOrZpILJMBZYKZxZq2gJgIyxMImGGiQMLCxLTmhqw1QKEqziLzFWJYVSHhYeFNqsQCoidYIQ6LmofGjn2BYKkQw3E1jIkzELivEUzdkpZGzIu3WZFFoVEVHoBFxuXbFDdg1kSEkAMKJIROVISQyMYA2WEqcOb0bDQMJFBOi1/rwCsXdf9U//Z" class="logo-img" alt="dbrz.ai logo"/>
+    <div class="form-title">
+      <h1>Interview Evaluation Form</h1>
+      <p>Salesforce Developer Assessment</p>
+      <span class="badge" id="stageBadge">Select stage</span>
+    </div>
+  </div>
+
+  <!-- PAGE 1: CANDIDATE INFO -->
+  <div class="section-card">
+    <div class="section-label"><strong>Candidate information</strong></div>
+    <div class="field-grid" style="margin-bottom:0.75rem">
+      <div class="field">
+        <label>Candidate name</label>
+        <input type="text" id="candName" placeholder="Enter candidate name"/>
+      </div>
+      <div class="field">
+        <label>Interview date</label>
+        <input type="date" id="intDate"/>
+      </div>
+    </div>
+    <div class="field-grid" style="margin-bottom:0.75rem">
+      <div class="field">
+        <label>Interviewer name</label>
+        <input type="text" id="interviewer" placeholder="Enter interviewer name"/>
+      </div>
+      <div class="field">
+        <label>Interview stage</label>
+        <select id="stageSelect" onchange="updateBadge()">
+          <option value="" disabled selected>Select stage</option>
+          <option value="L1">L1 interview</option>
+          <option value="L2">L2 interview</option>
+          <option value="client">Client interview</option>
+          <option value="hr">HR round</option>
+          <option value="final">Final round</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-grid">
+      <div class="field">
+        <label>Position applied for</label>
+        <select id="position">
+          <option value="" disabled selected>Select position</option>
+          <option>Salesforce Junior Developer</option>
+          <option>Salesforce Developer</option>
+          <option>Salesforce Senior Developer</option>
+          <option>Salesforce Technical Lead</option>
+          <option>Salesforce Architect</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Years of experience</label>
+        <input type="number" id="expYears" placeholder="e.g. 8" min="0" max="40"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- GENERAL EVALUATION -->
+  <div class="section-card">
+    <div class="section-label"><strong>General evaluation</strong></div>
+    <div class="eval-row">
+      <div class="eval-label">Overall project exposure<div class="eval-sub">Quality and breadth of past projects</div></div>
+      <select class="eval-select" id="sel_gen1"><option value="" disabled selected>Rate</option><option>Excellent</option><option>Good</option><option>Average</option><option>Below average</option><option>Poor</option></select>
+    </div>
+    <div class="eval-row">
+      <div class="eval-label">Communication<div class="eval-sub">Clarity, articulation, confidence</div></div>
+      <select class="eval-select" id="sel_gen2"><option value="" disabled selected>Rate</option><option>Excellent</option><option>Good</option><option>Average</option><option>Below average</option><option>Poor</option></select>
+    </div>
+    <div class="eval-row">
+      <div class="eval-label">Problem solving<div class="eval-sub">Code quality and approach</div></div>
+      <select class="eval-select" id="sel_gen3"><option value="" disabled selected>Rate</option><option>Excellent</option><option>Good</option><option>Average</option><option>Below average</option><option>Poor</option></select>
+    </div>
+    <div class="eval-row">
+      <div class="eval-label">Team handling<div class="eval-sub">Leadership and collaboration</div></div>
+      <select class="eval-select" id="sel_gen4"><option value="" disabled selected>Rate</option><option>Excellent</option><option>Good</option><option>Average</option><option>Below average</option><option>Poor</option></select>
+    </div>
+    <div class="eval-row">
+      <div class="eval-label">Cloud experience<div class="eval-sub">Service, Sales, Experience cloud etc.</div></div>
+      <select class="eval-select" id="sel_gen5"><option value="" disabled selected>Rate</option><option>Excellent</option><option>Good</option><option>Average</option><option>Below average</option><option>Poor</option></select>
+    </div>
+    <div class="eval-row">
+      <div class="eval-label">Deployment knowledge<div class="eval-sub">CI/CD, changesets, DevOps</div></div>
+      <select class="eval-select" id="sel_gen6"><option value="" disabled selected>Rate</option><option>Excellent</option><option>Good</option><option>Average</option><option>Below average</option><option>Poor</option></select>
+    </div>
+    <div class="eval-row">
+      <div class="eval-label">General rating<div class="eval-sub">Overall rating for the general evaluation section</div></div>
+      <div class="stars" id="stars_genOverall"></div>
+    </div>
+  </div>
+
+  <!-- PAGE 2: TECHNICAL EVALUATION -->
+  <div class="section-card page-break-before">
+    <div class="section-label"><strong>Technical evaluation</strong></div>
+    <div class="tech-grid">
+      <div>
+        <div class="tech-section-title"><strong>LWC</strong></div>
+        <div class="tech-row"><span class="tech-row-label">Scenario questions</span></div>
+        <div class="tech-row"><span class="tech-row-label">Parent to child communication</span></div>
+        <div class="tech-row"><span class="tech-row-label">Custom events &amp; code</span></div>
+        <div class="tech-row"><span class="tech-row-label">Grand child to parent (bubble)</span></div>
+        <div class="tech-row"><span class="tech-row-label">LMS</span></div>
+        <div class="tech-row"><span class="tech-row-label">Rating</span><div class="tech-stars" id="stars_lwc"></div></div>
+        <div class="tech-score-line">LWC score: <span id="sc_lwc">0/5</span></div>
+      </div>
+      <div>
+        <div class="tech-section-title"><strong>Apex</strong></div>
+        <div class="tech-row"><span class="tech-row-label">Trigger code</span></div>
+        <div class="tech-row"><span class="tech-row-label">SOQL &amp; Map creation</span></div>
+        <div class="tech-row"><span class="tech-row-label">Asynchronous Apex</span></div>
+        <div class="tech-row"><span class="tech-row-label">Custom settings / metadata</span></div>
+        <div class="tech-row"><span class="tech-row-label">Best practices &amp; test class</span></div>
+        <div class="tech-row"><span class="tech-row-label">Rating</span><div class="tech-stars" id="stars_apex"></div></div>
+        <div class="tech-score-line">Apex score: <span id="sc_apex">0/5</span></div>
+      </div>
+      <div>
+        <div class="tech-section-title"><strong>Security</strong></div>
+        <div class="tech-row"><span class="tech-row-label">OWD scenario questions</span></div>
+        <div class="tech-row"><span class="tech-row-label">Object / field level security</span></div>
+        <div class="tech-row"><span class="tech-row-label">Data level security &amp; sharing</span></div>
+        <div class="tech-row"><span class="tech-row-label">Rating</span><div class="tech-stars" id="stars_sec"></div></div>
+        <div class="tech-score-line">Security score: <span id="sc_sec">0/5</span></div>
+      </div>
+      <div>
+        <div class="tech-section-title"><strong>Integration</strong></div>
+        <div class="tech-row"><span class="tech-row-label">Scenario-based questions</span></div>
+        <div class="tech-row"><span class="tech-row-label">Outbound &amp; inbound</span></div>
+        <div class="tech-row"><span class="tech-row-label">REST API knowledge</span></div>
+        <div class="tech-row"><span class="tech-row-label">Rating</span><div class="tech-stars" id="stars_int"></div></div>
+        <div class="tech-score-line">Integration score: <span id="sc_int">0/5</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERALL SCORE -->
+  <div class="score-bar">
+    <div>
+      <div class="score-num" id="totalScore">0/25</div>
+      <div class="score-sub">Overall score / 25</div>
+    </div>
+    <div class="score-track">
+      <div class="score-fill" id="scoreFill"></div>
+    </div>
+    <div style="text-align:right;flex-shrink:0;font-size:12px;line-height:1.8">
+      <span style="color:#15803d">&#9632; 21 to 25 Excellent</span><br/>
+      <span style="color:#ffa621">&#9632; 16 to 20 Good</span><br/>
+      <span style="color:#991b1b">&#9632; < 16 Needs review</span>
+    </div>
+  </div>
+
+  <!-- FINAL DECISION -->
+  <div class="section-card">
+    <div class="section-label"><strong>Final decision</strong></div>
+    <div class="decision-row">
+      <button class="decision-btn" onclick="selectDecision(this,'sel-green')">Selected</button>
+      <button class="decision-btn" onclick="selectDecision(this,'sel-amber')">On hold</button>
+      <button class="decision-btn" onclick="selectDecision(this,'sel-amber')">Next round</button>
+      <button class="decision-btn" onclick="selectDecision(this,'sel-red')">Rejected</button>
+    </div>
+    <div class="field">
+      <label>Additional comments / feedback</label>
+      <textarea id="comments" placeholder="Enter your overall feedback about the candidate¦"></textarea>
+    </div>
+  </div>
+
+  <!-- ACTION BUTTONS -->
+  <div class="action-row">
+    <button class="btn-pdf" onclick="savePDF()">&#128196; Save as PDF</button>
+    <button class="btn-email" onclick="sendViaOutlook()">&#9993; Send Email (Outlook)</button>
+  </div>
+</div>
+
+<!-- EMAIL MODAL -->
+<div class="modal-overlay" id="emailModal">
+  <div class="modal-box">
+    <div class="modal-title">Send evaluation to HR via Outlook</div>
+    <div class="modal-subtitle">Open a pre-filled Outlook Web draft after choosing the email addresses.</div>
+    <hr class="divider"/>
+    <!--<div class="modal-field">
+      <label>From (your email)</label>
+      <input type="email" id="emailFrom" placeholder="interviewer@yourcompany.com"/>
+      <div class="modal-hint">Pre-fill this in the HTML to save time â€” ask your IT team to set a default.</div>
+    </div>-->
+    <div class="modal-field">
+      <label>To HR team email</label>
+      <input type="email" id="emailTo" value="muhammed.shabeeb@dbizsolution.com"/>
+    </div>
+    <div class="modal-field">
+      <label>CC (optional)</label>
+      <input type="email" id="emailCc" placeholder="anjana.jayan@dbizsolution.com"/>
+    </div>
+    <div id="modalStatus" class="modal-status"></div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeEmailModal()">Cancel</button>
+      <button class="modal-send" onclick="sendViaOutlook()">Open Outlook</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script>
+const STAR_PATH='M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z';
+const ratings={};
+const groups={lwc:["lwc"],apex:["apex"],sec:["sec"],int:["int"]};
+
+function makeStar(key,val,size){
+  const ns="http://www.w3.org/2000/svg";
+  const svg=document.createElementNS(ns,"svg");
+  svg.setAttribute("viewBox","0 0 20 20");
+  svg.style.cssText=`width:${size}px;height:${size}px;cursor:pointer;fill:rgba(0,0,0,0.12);flex-shrink:0;transition:fill 0.1s`;
+  const path=document.createElementNS(ns,"path");
+  path.setAttribute("d",STAR_PATH);
+  svg.appendChild(path);
+  svg.addEventListener("click",()=>setRating(key,val));
+  svg.addEventListener("mouseenter",()=>hoverStars(key,val));
+  svg.addEventListener("mouseleave",()=>renderStars(key));
+  return svg;
+}
+
+function initGroup(id,key,size){
+  const c=document.getElementById(id);
+  if(!c)return;
+  c.innerHTML="";
+  for(let i=1;i<=5;i++)c.appendChild(makeStar(key,i,size));
+}
+
+function setRating(key,val){ratings[key]=val;renderStars(key);updateScores();}
+
+function getSvgs(key){
+  const c=document.getElementById("stars_"+key);
+  return c?Array.from(c.querySelectorAll("svg")):[];
+}
+
+function renderStars(key){
+  const val=ratings[key]||0;
+  getSvgs(key).forEach((s,i)=>{s.style.fill=i<val?"#F59E0B":"rgba(0,0,0,0.12)";});
+}
+
+function hoverStars(key,val){
+  getSvgs(key).forEach((s,i)=>{s.style.fill=i<val?"#FBBF24":"rgba(0,0,0,0.12)";});
+}
+
+function avg(keys){
+  const vals=keys.map(k=>ratings[k]||0).filter(v=>v>0);
+  if(!vals.length)return null;
+  return Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*10)/10;
+}
+
+function updateScores(){
+  const scores={};
+  ["lwc","apex","sec","int"].forEach(g=>{
+    scores[g]=avg(groups[g]);
+    const el=document.getElementById("sc_"+g);
+    if(el)el.textContent=scores[g]!==null?scores[g]+"/5":"0/5";
+  });
+  const genScore=ratings.genOverall||null;
+  const scoreParts=[genScore,scores.lwc,scores.apex,scores.sec,scores.int];
+  const hasAnyScore=scoreParts.some(v=>v!==null);
+  if(hasAnyScore){
+    const total=scoreParts.reduce((sum,val)=>sum+(val||0),0);
+    document.getElementById("totalScore").textContent=total+"/25";
+    const pct=total/25;
+    const fill=document.getElementById("scoreFill");
+    fill.style.width=Math.round(pct*100)+"%";
+    fill.style.background=pct>=0.85?"#10B981":pct>=0.65?"#F59E0B":"#EF4444";
+  }else{
+    document.getElementById("totalScore").textContent="0/25";
+    const fill=document.getElementById("scoreFill");
+    fill.style.width="0%";
+    fill.style.background="#10B981";
+  }
+}
+
+function selectDecision(btn,cls){
+  document.querySelectorAll(".decision-btn").forEach(b=>{b.className="decision-btn";});
+  btn.classList.add(cls);
+}
+
+function updateBadge(){
+  const sel=document.getElementById("stageSelect");
+  if(sel.value)document.getElementById("stageBadge").textContent=sel.options[sel.selectedIndex].text;
+}
+
+function initializeDefaults(){
+  const dateInput=document.getElementById("intDate");
+  if(dateInput&&!dateInput.value){
+    const now=new Date();
+    const localDate=new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().split("T")[0];
+    dateInput.value=localDate;
+  }
+
+  const interviewerInput=document.getElementById("interviewer");
+  const savedInterviewer=localStorage.getItem("interviewerName");
+  if(interviewerInput&&savedInterviewer&&!interviewerInput.value){
+    interviewerInput.value=savedInterviewer;
+  }
+
+  if(interviewerInput){
+    interviewerInput.addEventListener("input",e=>{
+      localStorage.setItem("interviewerName",e.target.value.trim());
+    });
+  }
+}
+
+function getFormData(){
+  const name=document.getElementById("candName").value||"â€”";
+  const date=document.getElementById("intDate").value;
+  const fmtDate=date?new Date(date+"T00:00:00").toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}):"â€”";
+  const interviewer=document.getElementById("interviewer").value||"â€”";
+  const stageEl=document.getElementById("stageSelect");
+  const stage=stageEl.value?stageEl.options[stageEl.selectedIndex].text:"â€”";
+  const posEl=document.getElementById("position");
+  const position=posEl.value||"â€”";
+  const exp=document.getElementById("expYears").value;
+  const score=document.getElementById("totalScore").textContent;
+  const comments=document.getElementById("comments").value||"â€”";
+  const decisionEl=[...document.querySelectorAll(".decision-btn")].find(b=>b.className!=="decision-btn");
+  const decision=decisionEl?decisionEl.textContent:"â€”";
+  const selToText=id=>{const s=document.getElementById(id);return s&&s.value&&s.value!=="Rate"?s.value:"â€”";};
+  const starToText=key=>{const v=ratings[key];return v?("â˜…".repeat(v)+"â˜†".repeat(5-v)):"â€”";};
+  return{name,fmtDate,interviewer,stage,position,exp,score,comments,decision,selToText,starToText};
+}
+
+function buildEmailBody(){
+  const d=getFormData();
+  const row=(label,value)=>`${label.padEnd(14," ")}: ${value}`;
+  return `Dear HR Team,
+
+Interview evaluation summary:
+
+${row("Candidate",d.name)}
+${row("Date",d.fmtDate)}
+${row("Interviewer",d.interviewer)}
+${row("Stage",d.stage)}
+${row("Position",d.position)}
+${row("Experience",`${d.exp} year(s)`)}
+${row("Overall Score",d.score)}
+${row("Decision",d.decision)}
+
+Comments:
+${d.comments}
+
+Regards,
+${d.interviewer}`;
+}
+
+function getPdfReportData(){
+  const d=getFormData();
+  const generalRows=[
+    ["Overall project exposure",d.selToText("sel_gen1")],
+    ["Communication",d.selToText("sel_gen2")],
+    ["Problem solving",d.selToText("sel_gen3")],
+    ["Team handling",d.selToText("sel_gen4")],
+    ["Cloud experience",d.selToText("sel_gen5")],
+    ["Deployment knowledge",d.selToText("sel_gen6")],
+    ["General rating",`${ratings.genOverall||0}/5`]
+  ];
+  const technicalRows=[
+    ["LWC",document.getElementById("sc_lwc").textContent||"0/5"],
+    ["Apex",document.getElementById("sc_apex").textContent||"0/5"],
+    ["Security",document.getElementById("sc_sec").textContent||"0/5"],
+    ["Integration",document.getElementById("sc_int").textContent||"0/5"]
+  ];
+  return {...d,generalRows,technicalRows};
+}
+
+function getScoreAccent(scoreText){
+  const score=parseFloat((scoreText||"0").split("/")[0])||0;
+  if(score>=21)return [16,185,129];
+  if(score>=16)return [245,158,11];
+  return [239,68,68];
+}
+
+function savePDF(){
+  if(!window.jspdf||!window.jspdf.jsPDF){
+    alert("PDF generator failed to load. Please check your internet connection and try again.");
+    return;
+  }
+
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:"p",unit:"mm",format:"a4"});
+  const pageWidth=doc.internal.pageSize.getWidth();
+  const pageHeight=doc.internal.pageSize.getHeight();
+  const margin=14;
+  const contentWidth=pageWidth-margin*2;
+  const report=getPdfReportData();
+  const logo=document.querySelector(".logo-img");
+  let y=18;
+
+  const ensureSpace=needed=>{
+    if(y+needed<=pageHeight-16)return;
+    doc.addPage();
+    y=18;
+  };
+
+  const drawCard=(title,rows,options={})=>{
+    const rowHeight=8;
+    const headerHeight=10;
+    const bodyHeight=rows.length*rowHeight+8;
+    const cardHeight=headerHeight+bodyHeight;
+    ensureSpace(cardHeight+6);
+    doc.setFillColor(255,255,255);
+    doc.setDrawColor(224,227,231);
+    doc.roundedRect(margin,y,contentWidth,cardHeight,4,4,"FD");
+    doc.setFillColor(244,247,250);
+    doc.roundedRect(margin,y,contentWidth,headerHeight,4,4,"F");
+    doc.setFont("helvetica","bold");
+    doc.setFontSize(11);
+    doc.setTextColor(42,50,60);
+    doc.text(title,margin+6,y+6.5);
+    let rowY=y+headerHeight+7;
+    rows.forEach(([label,value])=>{
+      doc.setFont("helvetica","normal");
+      doc.setFontSize(9.5);
+      doc.setTextColor(95,94,90);
+      doc.text(label,margin+6,rowY);
+      doc.setFont("helvetica","bold");
+      doc.setTextColor(26,26,24);
+      const text=Array.isArray(value)?value.join(" "):String(value||"-");
+      doc.text(text,margin+72,rowY);
+      rowY+=rowHeight;
+    });
+    y+=cardHeight+6;
+  };
+
+  doc.setFillColor(16,24,40);
+  doc.roundedRect(margin,margin,pageWidth-margin*2,30,6,6,"F");
+  if(logo&&logo.src){
+    try{
+      doc.addImage(logo.src,"JPEG",margin+6,margin+5,26,18);
+    }catch(e){}
+  }
+  doc.setTextColor(255,255,255);
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(18);
+  doc.text("Interview Feedback Report",margin+38,margin+11);
+  doc.setFont("helvetica","normal");
+  doc.setFontSize(10);
+  doc.text("Salesforce Developer Assessment",margin+38,margin+18);
+  doc.setFillColor(221,238,255);
+  doc.roundedRect(pageWidth-48,margin+7,28,8,4,4,"F");
+  doc.setTextColor(24,95,165);
+  doc.setFontSize(9);
+  doc.text(report.stage||"Select stage",pageWidth-34,margin+12,{align:"center"});
+  y=52;
+
+  const accent=getScoreAccent(report.score);
+  doc.setFillColor(accent[0],accent[1],accent[2]);
+  doc.roundedRect(margin,y,contentWidth,24,5,5,"F");
+  doc.setTextColor(255,255,255);
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(11);
+  doc.text("Overall Score",margin+8,y+9);
+  doc.setFontSize(22);
+  doc.text(report.score||"0/25",margin+8,y+19);
+  doc.setFont("helvetica","normal");
+  doc.setFontSize(9.5);
+  doc.text(`Decision: ${report.decision||"-"}`,pageWidth-22,y+13,{align:"right"});
+  y+=30;
+
+  drawCard("Candidate Information",[
+    ["Candidate",report.name],
+    ["Interview Date",report.fmtDate],
+    ["Interviewer",report.interviewer],
+    ["Stage",report.stage],
+    ["Position",report.position],
+    ["Experience",`${report.exp} year(s)`]
+  ]);
+
+  drawCard("General Evaluation",report.generalRows);
+  drawCard("Technical Evaluation",report.technicalRows);
+
+  const commentLines=doc.splitTextToSize(report.comments||"-",contentWidth-12);
+  ensureSpace(26+commentLines.length*5);
+  doc.setFillColor(255,255,255);
+  doc.setDrawColor(224,227,231);
+  doc.roundedRect(margin,y,contentWidth,22+commentLines.length*5,4,4,"FD");
+  doc.setFillColor(244,247,250);
+  doc.roundedRect(margin,y,contentWidth,10,4,4,"F");
+  doc.setTextColor(42,50,60);
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(11);
+  doc.text("Feedback & Comments",margin+6,y+6.5);
+  doc.setTextColor(26,26,24);
+  doc.setFont("helvetica","normal");
+  doc.setFontSize(10);
+  doc.text(commentLines,margin+6,y+16);
+  y+=28+commentLines.length*5;
+
+  doc.setTextColor(120,124,130);
+  doc.setFontSize(8.5);
+  doc.text(`Generated on ${new Date().toLocaleString("en-GB")}`,margin,pageHeight-8);
+  doc.text("dbrz.ai",pageWidth-margin,pageHeight-8,{align:"right"});
+
+  const safeStage=(report.stage&&report.stage!=="â€”"?report.stage:"Interview").replace(/[\\/:*?"<>|]+/g," ").replace(/\s+/g," ").trim();
+  const safeName=(report.name&&report.name!=="â€”"?report.name:"Candidate").replace(/[\\/:*?"<>|]+/g," ").replace(/\s+/g," ").trim();
+  doc.save(`${safeStage} Feedback of ${safeName}.pdf`);
+}
+
+function openEmailModal(){
+  const name=document.getElementById("candName").value||"Candidate";
+  const stageEl=document.getElementById("stageSelect");
+  const stage=stageEl.value?stageEl.value.toUpperCase():"";
+  document.getElementById("emailModal").classList.add("open");
+}
+
+function closeEmailModal(){
+  document.getElementById("emailModal").classList.remove("open");
+  document.getElementById("modalStatus").className="modal-status";
+  document.getElementById("modalStatus").textContent="";
+}
+
+function sendViaOutlook(){
+  const to=document.getElementById("emailTo").value.trim();
+  const cc=document.getElementById("emailCc").value.trim();
+  const status=document.getElementById("modalStatus");
+  if(!to){status.className="modal-status err";status.textContent="Please enter the HR team email address.";return;}
+
+  const name=document.getElementById("candName").value||"Candidate";
+  const stageEl=document.getElementById("stageSelect");
+  const stageLabel=stageEl.value?stageEl.options[stageEl.selectedIndex].text:"Interview";
+  const subject=`${stageLabel} feedback of ${name}`;
+  const body=buildEmailBody();
+
+  status.className="modal-status ok";
+  status.textContent="Opening Outlook Web with a pre-filled draft.";
+
+  setTimeout(()=>{
+    const maxBodyLength=1200;
+    const safeBody=body.length>maxBodyLength?body.slice(0,maxBodyLength)+"\n\n[Body trimmed to fit Outlook URL limit]":body;
+    let outlookUrl=`https://outlook.cloud.microsoft/mail/deeplink/compose?to=${encodeURIComponent(to)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(safeBody)}`;
+    if(cc)outlookUrl+=`&cc=${encodeURIComponent(cc)}&ccRecipients=${encodeURIComponent(cc)}`;
+    window.open(outlookUrl,"_blank","noopener");
+  }, 800);
+}
+
+// Init stars â€” no defaults
+initGroup("stars_genOverall","genOverall",20);
+["lwc","apex","sec","int"].forEach(k=>initGroup("stars_"+k,k,17));
+initializeDefaults();
+</script>
+</body>
+</html>
